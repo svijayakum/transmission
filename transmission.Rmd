@@ -4,7 +4,7 @@ author: "Swathi Vijayakumar"
 date: "December 24, 2015"
 output: html_document
 ---
-##Executive Summary
+## Executive Summary
 
 The purpose of this paper is to determine the relationship between a set of variables and miles per gallon. Specifical we want to determine if a manual vs an automatic transmision gives better gas milage.  If so, we will quantify the MPG difference between the two engins.
 For this analysis we will be using simple and multi regression along with exploratory analysis to answer the required question. Analysis shows that over all manula transmission does offer a slight benifit in MPG by about 1.68.    
