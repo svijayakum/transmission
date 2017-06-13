@@ -1,0 +1,129 @@
+---
+title: "Effect of Automatic vs Manual transmission on MPG "
+author: "Swathi Vijayakumar"
+date: "December 24, 2015"
+output: html_document
+---
+##Executive Summary
+
+The purpose of this paper is to determine the relationship between a set of variables and miles per gallon. Specifical we want to determine if a manual vs an automatic transmision gives better gas milage.  If so, we will quantify the MPG difference between the two engins.
+For this analysis we will be using simple and multi regression along with exploratory analysis to answer the required question. Analysis shows that over all manula transmission does offer a slight benifit in MPG by about 1.68.    
+
+
+## Data Processing
+
+```{r}
+library(ggplot2); library(leaps); library(corrplot); library(dplyr); library(lattice)
+library(grid); library(gridExtra)
+data("mtcars")
+```
+
+
+
+### Data set summaries
+
+```{r}
+summary(mtcars, n = 3)
+str(mtcars)
+dim(mtcars)
+```
+
+## Exploratory Analysis
+
+### Correlation and variable selection
+
+The variables to be used for the analysis in this paper were based on correlation to MPG. The variables that show the highest correlation to MPG are cyl, disp, hp, drat, wt and am.  
+
+```{r}
+cor = cor(mtcars)
+cor
+corrplot(cor, method = "number")
+
+# Subsetting the desired variables
+cars_mpg = select(mtcars, mpg:wt,am)
+
+# changing cyl and am to the factor class.  
+cars_mpg$cyl = as.factor(cars_mpg$cyl)
+cars_mpg$am = factor(cars_mpg$am,levels = c(0,1), labels = c("Automatic", "Manual"))
+
+str(cars_mpg)
+```
+
+## Regression models
+
+### Simple Linear Regression
+
+```{r}
+y = cars_mpg$mpg; x = cars_mpg$am; n =length(y) 
+fit1 = lm(y ~ x)
+summary(fit1)
+
+par(mfrow = c(2,2))
+plot(fit1)
+
+# 95% confidence interval
+sumCoef = summary(fit1)$coefficients
+sumCoef[2,1] + c(-1, 1) * qt(.975, df = fit1$df) * sumCoef[2, 2]
+
+```
+
+According to the linear fit coefficients, the average MPG for cars with manual transmission is 7.24 higher than for cars with automatic transmission with a 95% confidence interval of 3.64 and 10.84. The R-squared value of 0.3385 indicates that only 33.9% of the variation is explained by our model.  
+
+### Multiple regression
+
+For the multiple regression model only the variable that show a high correlation were chosen in addition to transmission(am).  In this case, cyl, disp, hp and wt show the highest correlation. The correlation plot shows that cyl and disp also show a high correalation with each other indicating colinearity. For this reason, only one of the two should be included.  cyl will be included in the multiple regression model.
+
+```{r}
+fit2 = lm(mpg ~ wt + cyl + hp + am, data = cars_mpg)
+summary(fit2)
+
+anova(fit1,fit2)
+
+par(mfrow = c(2,2))
+plot(fit2)
+```
+
+We performed an ANOVA on the two fits we've used.  Anova showed a p-value of 0.000285 indicating that the simple linear regression is significantly different form the multiple regression model.
+The plot of the fit shows that the data is normally distributed and show no heteroskedasticity. 
+According to the multiple regression model,cars with manual transmission have 1.68 MPGs more than automatic transmission. This model also explains 83% of the variation. 
+
+
+
+### Apendix - Plots 
+
+The box plot below shows a higher over all MPG average for manual transmission compared to automatic transmission.
+
+```{r, echo=FALSE}
+hist(cars_mpg$mpg, col = "red")
+
+qplot(am, mpg, data=cars_mpg, geom=c("boxplot"), main="MPG Automatic vs Manual",
+   xlab="Transmission", ylab="Miles per Gallon")
+```
+
+
+plot 1 clearly shows that with lower number of cylinders, cars with manual transmission have higher MPG. For a higher number of cylinders the transmission doesn't play much of a roll.  
+A similar relationship is seen for displacement, horsepower and weight.  With lower horsepower, displacement and weight manual transmission has better MPG performance.  
+The opposit relationship is seen for rear axle ratio. When the rear axel ratio is higher, manual transmission hows better MPG performance.  
+
+```{r}
+p1 = qplot(cyl, mpg, data=cars_mpg, shape = am, color=am, 
+      size=I(3),xlab="Number of cylinders", ylab="Miles per Gallon") 
+
+p2 = qplot(disp, mpg, data=cars_mpg, shape = am, color=am, 
+      size=I(3),xlab="Displacement (cu.in.)", ylab="Miles per Gallon") 
+
+p3 = qplot(hp, mpg, data=cars_mpg, shape = am, color=am, 
+      size=I(3),xlab="Gross horsepower ", ylab="Miles per Gallon") 
+
+p4 = qplot(drat, mpg, data=cars_mpg, shape = am, color=am, 
+      size=I(3),xlab="Rear axle ratio", ylab="Miles per Gallon") 
+
+p5 = qplot(wt, mpg, data=cars_mpg, shape=am, color=am, 
+      size=I(3),xlab="Weight", ylab="Miles per Gallon") 
+
+grid.arrange(p1, p2, p3, p4, p5)
+
+dev.off()
+```
+
+
