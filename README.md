@@ -1,6 +1,6 @@
 ## Files in this repo
 README.md – This is the README.md  
-transmission.Rmd - describes analysis performed and shows coded used 
+transmission.Rmd - describes analysis performed and shows coded used   
 transmission.html - output for analysis
 
 ## Purpose
