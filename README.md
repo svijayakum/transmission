@@ -5,5 +5,7 @@ transmission.html - output for analysis
 
 ## Purpose
 
-The purpose of this project is to determine the relationship between a set of variables and miles per gallon. Specifical we want to determine if a manual vs an automatic transmision gives better gas milage.  If so, we will quantify the MPG difference between the two engins.
-For this analysis we will be using simple and multi regression along with exploratory analysis to answer the required question. 
+The purpose of this project is to determine the relationship between a set of variables and miles per gallon. The following questions will be answered using simple and multi regression analysis: 
+
+ (1) Does manual transmission give better gass milage?  
+ (2) Quantify the MPG difference between manual and automatic transmissions.
